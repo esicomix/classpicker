@@ -1,0 +1,1106 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08080d">
+<title>ClassPicker | انتخاب تصادفی کلاس</title>
+
+<style>
+:root {
+    --bg: #08080d;
+    --panel: #12121c;
+    --panel2: #0d0d15;
+    --border: #2b2b40;
+    --purple: #8b5cf6;
+    --light: #c4b5fd;
+    --text: #f5f3ff;
+    --muted: #9695aa;
+    --green: #4ade80;
+    --red: #fb7185;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 50% 0%, #291446 0%, transparent 45%),
+        var(--bg);
+    color: var(--text);
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+button, input, textarea, select {
+    font: inherit;
+}
+
+header {
+    padding: 45px 16px;
+    text-align: center;
+    border-bottom: 1px solid #35234f;
+    background: linear-gradient(180deg, #171022, #0a0910);
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 65px;
+    height: 65px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #a78bfa, #6d28d9);
+    box-shadow: 0 0 35px #8b5cf644;
+    font-size: 30px;
+    margin-bottom: 16px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: clamp(28px, 5vw, 42px);
+    color: var(--light);
+}
+
+header p {
+    color: #aaa4bc;
+    line-height: 2;
+    margin: 12px 0 0;
+}
+
+.container {
+    width: min(900px, 93%);
+    margin: 30px auto;
+}
+
+.panel {
+    background: linear-gradient(145deg, #151520, #101018);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 35px #00000025;
+}
+
+.panel h2 {
+    font-size: 19px;
+    margin: 0 0 22px;
+    color: var(--light);
+}
+
+.panel h2 span {
+    margin-left: 8px;
+}
+
+label:not(.check-row) {
+    display: block;
+    font-size: 13px;
+    color: #d4d4e3;
+    margin-bottom: 8px;
+}
+
+input:not([type="checkbox"]),
+textarea,
+select {
+    width: 100%;
+    display: block;
+    padding: 13px;
+    margin: 0 0 18px;
+    border: 1px solid #303047;
+    border-radius: 10px;
+    background: #090910;
+    color: white;
+    outline: none;
+    transition: .2s;
+}
+
+textarea {
+    min-height: 135px;
+    line-height: 2;
+    resize: vertical;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px #8b5cf622;
+}
+
+select option {
+    background: #12121c;
+}
+
+button {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 12px 17px;
+    color: white;
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: transform .2s, filter .2s;
+}
+
+button:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+}
+
+button:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+}
+
+button.secondary {
+    background: #222231;
+    border-color: #39394c;
+}
+
+button.danger {
+    background: #35151e;
+    border-color: #6d2637;
+    color: #fda4af;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 2;
+    margin: 14px 0 0;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.stat {
+    text-align: center;
+    padding: 18px 10px;
+    background: #0a0a12;
+    border: 1px solid #28283a;
+    border-radius: 13px;
+}
+
+.stat strong {
+    display: block;
+    color: var(--light);
+    font-size: 29px;
+    margin-bottom: 8px;
+}
+
+.stat span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #d4d4e3;
+    line-height: 2;
+}
+
+.check-row input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--purple);
+    flex-shrink: 0;
+}
+
+.draw {
+    width: 100%;
+    margin-top: 18px;
+    padding: 18px;
+    font-size: 16px;
+    background: linear-gradient(100deg, #7c3aed, #a855f7, #6d28d9);
+    box-shadow: 0 0 25px #8b5cf625;
+}
+
+.result {
+    text-align: center;
+    padding: 30px 15px;
+    margin-top: 20px;
+    border: 1px solid #49316d;
+    border-radius: 16px;
+    background: radial-gradient(ellipse at center, #281541, #11101a 75%);
+}
+
+.result-label {
+    color: #b6abc9;
+    font-size: 12px;
+}
+
+.result .number {
+    color: var(--light);
+    font-size: clamp(48px, 10vw, 70px);
+    font-weight: bold;
+    margin: 16px 0;
+    text-shadow: 0 0 28px #8b5cf655;
+}
+
+.result .student {
+    color: #f5d0fe;
+    font-size: clamp(21px, 5vw, 29px);
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.result-class {
+    color: #aaa4bc;
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 17px;
+    flex-wrap: wrap;
+}
+
+.student-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.student-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 5px;
+    border-bottom: 1px solid #272737;
+}
+
+.student-list li:last-child {
+    border-bottom: none;
+}
+
+.student-num {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    color: var(--light);
+    background: #29203c;
+    font-size: 12px;
+}
+
+.student-name {
+    flex: 1;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+}
+
+.status {
+    color: var(--green);
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.status.pending {
+    color: var(--muted);
+}
+
+.remove-student {
+    padding: 7px 10px;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px 5px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 2;
+}
+
+.notice {
+    display: none;
+    border: 1px solid #385d48;
+    background: #10251b;
+    color: #86efac;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.notice.show {
+    display: block;
+}
+
+footer {
+    padding: 25px 15px;
+    border-top: 1px solid #20202d;
+    text-align: center;
+    color: #68687d;
+    font-size: 12px;
+    line-height: 2;
+}
+
+@media (max-width: 550px) {
+    header {
+        padding: 35px 14px;
+    }
+
+    .container {
+        width: 94%;
+        margin: 20px auto;
+    }
+
+    .panel {
+        padding: 17px;
+        border-radius: 14px;
+    }
+
+    .actions button {
+        flex: 1 1 100%;
+    }
+
+    .student-list li {
+        gap: 7px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🎓</div>
+    <h1>ClassPicker</h1>
+    <p>مدیریت هوشمند کلاس و انتخاب تصادفی دانش‌آموزان</p>
+</header>
+
+<main class="container">
+
+    <section class="panel">
+        <h2><span>✦</span> ساخت کلاس جدید</h2>
+
+        <div id="createNotice" class="notice" role="status"></div>
+
+        <label for="newClassName">نام کلاس</label>
+        <input id="newClassName"
+               maxlength="80"
+               placeholder="مثلاً نهم الف">
+
+        <label for="newStudents">اسامی دانش‌آموزان</label>
+        <textarea id="newStudents"
+                  placeholder="هر اسم را در یک خط بنویس&#10;علی رضایی&#10;محمد احمدی&#10;سارا محمدی"></textarea>
+
+        <button id="createButton">＋ ساخت و ذخیره کلاس</button>
+
+        <p class="hint">
+            هر کلاس جداگانه ذخیره می‌شود. برای نمونه می‌توانی نهم الف و نهم ب را بسازی.
+        </p>
+    </section>
+
+    <section class="panel">
+        <h2><span>▤</span> مدیریت کلاس‌ها</h2>
+
+        <label for="classSelect">کلاس موردنظر</label>
+        <select id="classSelect">
+            <option value="">هنوز کلاسی ساخته نشده</option>
+        </select>
+
+        <div class="stats">
+            <div class="stat">
+                <strong id="studentCount">۰</strong>
+                <span>تعداد دانش‌آموزان</span>
+            </div>
+            <div class="stat">
+                <strong id="drawCount">۰</strong>
+                <span>انتخاب‌شده در این دور</span>
+            </div>
+        </div>
+
+        <label for="editStudents">فهرست اسامی (هر اسم در یک خط)</label>
+        <textarea id="editStudents"
+                  placeholder="ابتدا یک کلاس انتخاب کن"
+                  disabled></textarea>
+
+        <div class="actions">
+            <button id="saveButton">ذخیره تغییرات</button>
+            <button id="resetButton" class="secondary">شروع دور جدید</button>
+            <button id="deleteButton" class="danger">حذف کلاس</button>
+        </div>
+
+        <p class="hint">
+            ویرایش فهرست، شماره‌ها را از ۱ مرتب می‌کند و دور انتخاب را از نو آغاز می‌کند.
+        </p>
+    </section>
+
+    <section class="panel">
+        <h2><span>✧</span> انتخاب تصادفی</h2>
+
+        <label class="check-row">
+            <input type="checkbox" id="noRepeat" checked>
+            جلوگیری از انتخاب تکراری در یک دور
+        </label>
+
+        <button id="drawButton" class="draw">
+            🎲 انتخاب دانش‌آموز
+        </button>
+
+        <div class="result" aria-live="polite">
+            <div class="result-label">شماره دانش‌آموز</div>
+            <div class="number" id="resultNumber">—</div>
+            <div class="student" id="resultName">آماده انتخاب</div>
+            <div class="result-class" id="resultClass">
+                ابتدا یک کلاس بساز یا انتخاب کن
+            </div>
+
+            <div class="result-actions">
+                <button id="copyButton" class="secondary" hidden>
+                    کپی نتیجه
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2><span>☷</span> فهرست شماره‌ها</h2>
+
+        <div class="actions" style="margin-bottom:16px">
+            <button id="exportButton" class="secondary">
+                دانلود فهرست کلاس
+            </button>
+        </div>
+
+        <ul id="studentList" class="student-list">
+            <li class="empty">برای دیدن اسامی، یک کلاس بساز.</li>
+        </ul>
+    </section>
+
+</main>
+
+<footer>
+    ClassPicker · ابزار انتخاب تصادفی دانش‌آموزان
+    <br>
+    اطلاعات این نسخه در مرورگر همین دستگاه ذخیره می‌شود.
+</footer>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "classPickerData_v2";
+
+const $ = id => document.getElementById(id);
+
+let classes = {};
+let activeClass = "";
+let lastWinnerId = null;
+
+function makeId() {
+    if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2);
+}
+
+function parseNames(text) {
+    return text
+        .split(/\r?\n/)
+        .map(name => name.trim())
+        .filter(Boolean);
+}
+
+function showNotice(message, isError = false) {
+    const box = $("createNotice");
+
+    box.textContent = message;
+    box.style.borderColor = isError ? "#743344" : "#385d48";
+    box.style.background = isError ? "#29131a" : "#10251b";
+    box.style.color = isError ? "#fda4af" : "#86efac";
+    box.classList.add("show");
+
+    window.clearTimeout(showNotice.timer);
+    showNotice.timer = window.setTimeout(() => {
+        box.classList.remove("show");
+    }, 4000);
+}
+
+function persist() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(classes));
+        return true;
+    } catch (error) {
+        showNotice(
+            "ذخیره اطلاعات انجام نشد. تنظیمات ذخیره‌سازی مرورگر را بررسی کن.",
+            true
+        );
+        return false;
+    }
+}
+
+function loadData() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+            classes = {};
+            return;
+        }
+
+        const data = JSON.parse(saved);
+
+        if (!data || typeof data !== "object" ||
+            Array.isArray(data)) {
+            classes = {};
+            return;
+        }
+
+        classes = {};
+
+        for (const [key, item] of Object.entries(data)) {
+            if (!item || typeof item.name !== "string" ||
+                !Array.isArray(item.students)) {
+                continue;
+            }
+
+            classes[key] = {
+                name: item.name,
+                students: item.students.filter(student =>
+                    student &&
+                    typeof student.id === "string" &&
+                    typeof student.name === "string"
+                ),
+                selectedIds: Array.isArray(item.selectedIds)
+                    ? item.selectedIds.filter(id =>
+                        typeof id === "string")
+                    : []
+            };
+
+            const validIds = new Set(
+                classes[key].students.map(student => student.id)
+            );
+
+            classes[key].selectedIds =
+                [...new Set(classes[key].selectedIds)]
+                    .filter(id => validIds.has(id));
+        }
+    } catch (error) {
+        classes = {};
+        showNotice(
+            "اطلاعات ذخیره‌شده قابل خواندن نیست.",
+            true
+        );
+    }
+}
+
+function currentClass() {
+    return classes[activeClass] || null;
+}
+
+function resetResult(message = "آماده انتخاب") {
+    lastWinnerId = null;
+    $("resultNumber").textContent = "—";
+    $("resultName").textContent = message;
+    $("resultClass").textContent = currentClass()
+        ? "کلاس: " + currentClass().name
+        : "ابتدا یک کلاس بساز یا انتخاب کن";
+    $("copyButton").hidden = true;
+}
+
+function createClass() {
+    const name = $("newClassName").value.trim();
+    const names = parseNames($("newStudents").value);
+
+    if (!name) {
+        showNotice("لطفاً نام کلاس را وارد کن.", true);
+        $("newClassName").focus();
+        return;
+    }
+
+    if (!names.length) {
+        showNotice("حداقل نام یک دانش‌آموز را وارد کن.", true);
+        $("newStudents").focus();
+        return;
+    }
+
+    const key = makeId();
+
+    classes[key] = {
+        name,
+        students: names.map(studentName => ({
+            id: makeId(),
+            name: studentName
+        })),
+        selectedIds: []
+    };
+
+    if (!persist()) {
+        delete classes[key];
+        return;
+    }
+
+    activeClass = key;
+    $("newClassName").value = "";
+    $("newStudents").value = "";
+
+    resetResult();
+    refresh();
+
+    showNotice("کلاس «" + name + "» ذخیره شد.");
+}
+
+function changeClass() {
+    activeClass = $("classSelect").value;
+    resetResult();
+    refresh();
+}
+
+function saveStudents() {
+    const c = currentClass();
+
+    if (!c) {
+        showNotice("ابتدا یک کلاس انتخاب کن.", true);
+        return;
+    }
+
+    const names = parseNames($("editStudents").value);
+
+    if (!names.length) {
+        showNotice(
+            "فهرست نمی‌تواند خالی باشد. برای حذف کلاس از دکمه حذف استفاده کن.",
+            true
+        );
+        return;
+    }
+
+    const previousStudents = c.students;
+    const previousSelected = c.selectedIds;
+
+    const oldByName = new Map();
+
+    for (const student of previousStudents) {
+        const normalized = student.name.toLocaleLowerCase();
+
+        if (!oldByName.has(normalized)) {
+            oldByName.set(normalized, []);
+        }
+
+        oldByName.get(normalized).push(student);
+    }
+
+    const newStudents = names.map(name => {
+        const normalized = name.toLocaleLowerCase();
+        const matches = oldByName.get(normalized);
+
+        if (matches && matches.length) {
+            return matches.shift();
+        }
+
+        return { id: makeId(), name };
+    });
+
+    c.students = newStudents;
+    c.selectedIds = [];
+
+    if (!persist()) {
+        c.students = previousStudents;
+        c.selectedIds = previousSelected;
+        return;
+    }
+
+    resetResult("فهرست به‌روزرسانی شد");
+    refresh();
+    showNotice("فهرست دانش‌آموزان ذخیره شد.");
+}
+
+function randomIndex(length) {
+    if (length <= 1) return 0;
+
+    if (window.crypto && crypto.getRandomValues) {
+        const range = 0x100000000;
+        const limit = range - (range % length);
+        const values = new Uint32Array(1);
+
+        do {
+            crypto.getRandomValues(values);
+        } while (values[0] >= limit);
+
+        return values[0] % length;
+    }
+
+    return Math.floor(Math.random() * length);
+}
+
+function drawStudent() {
+    const c = currentClass();
+
+    if (!c || !c.students.length) {
+        showNotice("ابتدا یک کلاس دارای دانش‌آموز انتخاب کن.", true);
+        return;
+    }
+
+    const noRepeat = $("noRepeat").checked;
+
+    const available = noRepeat
+        ? c.students.filter(student =>
+            !c.selectedIds.includes(student.id))
+        : c.students;
+
+    if (!available.length) {
+        showNotice(
+            "همه دانش‌آموزان این دور انتخاب شده‌اند؛ دور جدید را شروع کن.",
+            true
+        );
+        return;
+    }
+
+    const winner = available[randomIndex(available.length)];
+
+    const oldSelected = [...c.selectedIds];
+
+    if (noRepeat) {
+        c.selectedIds.push(winner.id);
+
+        if (!persist()) {
+            c.selectedIds = oldSelected;
+            return;
+        }
+    }
+
+    lastWinnerId = winner.id;
+
+    const number = c.students.findIndex(
+        student => student.id === winner.id
+    ) + 1;
+
+    $("resultNumber").textContent = number.toLocaleString("fa-IR");
+    $("resultName").textContent = winner.name;
+    $("resultClass").textContent = "کلاس: " + c.name;
+    $("copyButton").hidden = false;
+
+    refreshStats();
+    refreshList();
+}
+
+function resetRound() {
+    const c = currentClass();
+
+    if (!c) {
+        showNotice("ابتدا یک کلاس انتخاب کن.", true);
+        return;
+    }
+
+    const oldSelected = c.selectedIds;
+    c.selectedIds = [];
+
+    if (!persist()) {
+        c.selectedIds = oldSelected;
+        return;
+    }
+
+    resetResult("دور جدید آماده است");
+    refreshStats();
+    refreshList();
+
+    showNotice("دور جدید شروع شد.");
+}
+
+function deleteClass() {
+    const c = currentClass();
+
+    if (!c) {
+        showNotice("کلاسی برای حذف وجود ندارد.", true);
+        return;
+    }
+
+    if (!confirm(
+        "کلاس «" + c.name +
+        "» و تمام اطلاعات آن حذف شود؟ این کار قابل بازگشت نیست."
+    )) {
+        return;
+    }
+
+    const oldClasses = classes;
+    const oldActive = activeClass;
+
+    classes = { ...classes };
+    delete classes[activeClass];
+    activeClass = "";
+
+    if (!persist()) {
+        classes = oldClasses;
+        activeClass = oldActive;
+        return;
+    }
+
+    resetResult();
+    refresh();
+    showNotice("کلاس حذف شد.");
+}
+
+function refreshStats() {
+    const c = currentClass();
+
+    $("studentCount").textContent =
+        (c ? c.students.length : 0).toLocaleString("fa-IR");
+
+    $("drawCount").textContent =
+        (c ? c.selectedIds.length : 0).toLocaleString("fa-IR");
+}
+
+function refreshList() {
+    const c = currentClass();
+    const list = $("studentList");
+
+    list.replaceChildren();
+
+    if (!c || !c.students.length) {
+        const li = document.createElement("li");
+        li.className = "empty";
+        li.textContent = "فهرست دانش‌آموزی وجود ندارد.";
+        list.appendChild(li);
+        return;
+    }
+
+    c.students.forEach((student, index) => {
+        const li = document.createElement("li");
+
+        const number = document.createElement("span");
+        number.className = "student-num";
+        number.textContent = (index + 1).toLocaleString("fa-IR");
+
+        const name = document.createElement("span");
+        name.className = "student-name";
+        name.textContent = student.name;
+
+        const status = document.createElement("span");
+        status.className = "status" +
+            (c.selectedIds.includes(student.id) ? "" : " pending");
+
+        status.textContent = c.selectedIds.includes(student.id)
+            ? "انتخاب شد"
+            : "در انتظار";
+
+        li.append(number, name, status);
+
+        const remove = document.createElement("button");
+        remove.className = "danger remove-student";
+        remove.textContent = "حذف";
+        remove.setAttribute("aria-label", "حذف " + student.name);
+
+        remove.addEventListener("click", () => {
+            removeStudent(student.id);
+        });
+
+        li.appendChild(remove);
+        list.appendChild(li);
+    });
+}
+
+function removeStudent(id) {
+    const c = currentClass();
+
+    if (!c) return;
+
+    const student = c.students.find(s => s.id === id);
+    if (!student) return;
+
+    if (!confirm("دانش‌آموز «" + student.name + "» حذف شود؟")) {
+        return;
+    }
+
+    const oldStudents = c.students;
+    const oldSelected = c.selectedIds;
+
+    c.students = c.students.filter(s => s.id !== id);
+    c.selectedIds = c.selectedIds.filter(selectedId => selectedId !== id);
+
+    if (!persist()) {
+        c.students = oldStudents;
+        c.selectedIds = oldSelected;
+        return;
+    }
+
+    if (lastWinnerId === id) {
+        resetResult("دانش‌آموز حذف شد");
+    }
+
+    $("editStudents").value = c.students
+        .map(s => s.name).join("\n");
+
+    refresh();
+    showNotice("دانش‌آموز حذف شد.");
+}
+
+function exportClass() {
+    const c = currentClass();
+
+    if (!c) {
+        showNotice("ابتدا یک کلاس انتخاب کن.", true);
+        return;
+    }
+
+    const lines = [
+        "کلاس: " + c.name,
+        "",
+        ...c.students.map((s, i) =>
+            (i + 1) + ". " + s.name)
+    ];
+
+    const blob = new Blob(
+        ["\uFEFF" + lines.join("\r\n")],
+        { type: "text/plain;charset=utf-8" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = c.name.replace(/[\\/:*?"<>|]/g, "_") +
+        "-students.txt";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
+
+function copyResult() {
+    const c = currentClass();
+
+    if (!c || !lastWinnerId) return;
+
+    const student = c.students.find(s => s.id === lastWinnerId);
+    if (!student) return;
+
+    const number = c.students.findIndex(
+        s => s.id === student.id
+    ) + 1;
+
+    const text = "کلاس: " + c.name +
+        "\nشماره: " + number +
+        "\nدانش‌آموز انتخاب‌شده: " + student.name;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+            .then(() => showNotice("نتیجه کپی شد."))
+            .catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+
+    document.body.appendChild(area);
+    area.select();
+
+    try {
+        const success = document.execCommand("copy");
+        showNotice(
+            success ? "نتیجه کپی شد." : "کپی انجام نشد.",
+            !success
+        );
+    } catch {
+        showNotice("کپی انجام نشد.", true);
+    }
+
+    area.remove();
+}
+
+function refresh() {
+    const select = $("classSelect");
+    select.replaceChildren();
+
+    const entries = Object.entries(classes);
+
+    if (!entries.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "هنوز کلاسی ساخته نشده";
+        select.appendChild(option);
+        activeClass = "";
+    } else {
+        entries.forEach(([key, c]) => {
+            const option = document.createElement("option");
+            option.value = key;
+            option.textContent = c.name;
+            select.appendChild(option);
+        });
+
+        if (!classes[activeClass]) {
+            activeClass = entries[0][0];
+        }
+
+        select.value = activeClass;
+    }
+
+    const c = currentClass();
+
+    $("editStudents").disabled = !c;
+    $("saveButton").disabled = !c;
+    $("resetButton").disabled = !c;
+    $("deleteButton").disabled = !c;
+    $("drawButton").disabled = !c || !c.students.length;
+    $("exportButton").disabled = !c;
+
+    $("editStudents").value = c
+        ? c.students.map(s => s.name).join("\n")
+        : "";
+
+    refreshStats();
+    refreshList();
+
+    if (lastWinnerId && c) {
+        const student = c.students.find(s => s.id === lastWinnerId);
+
+        if (student) {
+            $("resultClass").textContent = "کلاس: " + c.name;
+        } else {
+            resetResult();
+        }
+    }
+}
+
+$("createButton").addEventListener("click", createClass);
+$("classSelect").addEventListener("change", changeClass);
+$("saveButton").addEventListener("click", saveStudents);
+$("resetButton").addEventListener("click", resetRound);
+$("deleteButton").addEventListener("click", deleteClass);
+$("drawButton").addEventListener("click", drawStudent);
+$("exportButton").addEventListener("click", exportClass);
+$("copyButton").addEventListener("click", copyResult);
+
+loadData();
+refresh();
+</script>
+
+</body>
+</html>
